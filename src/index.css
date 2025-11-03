@@ -3,3 +3,8 @@
 a{
   text-decoration: none;
 }
+
+#root{
+  background-color: rgba(4, 0, 29, 0.978);
+  min-height: 100vh;
+}
