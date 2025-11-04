@@ -11,24 +11,21 @@ export default function TaskList(){
     }, [tasks]); 
     return(
         <>
-        <div className="container">
-
-            <h1 className="text-center fw-semibold text-light">TASKS</h1>
-            <table className="table table-dark table-hover ">
-                <thead>
-                    <tr>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Stato</th>
-                        <th scope="col">Data di creazione</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {tableRows}
-
-                </tbody>
-            </table>
-
-        </div>
+            <div className="container">
+                <h1 className="text-center fw-semibold text-light">TASKS</h1>
+                <table className="table table-dark table-hover ">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Stato</th>
+                            <th scope="col">Data di creazione</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {tableRows}
+                    </tbody>
+                </table>
+            </div>
         </>
     )
 }
