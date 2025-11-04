@@ -31,8 +31,25 @@ export default function useTasks(){
             }
         })
     }
-    function removeTask(){
-        console.log('removeTask')
+    function removeTask(id){
+        console.log('removedTask', id)
+        return fetch(`${apiUrl}/tasks/${id}`,{
+            method:'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success === true){
+                setTasks(prev => prev.filter(task => task.id !== Number(id)));
+
+                return data.task
+            }
+            else{
+                throw new Error(data.message)
+            }
+        })
     }
     function updateTask (){
         console.log('updateTask')

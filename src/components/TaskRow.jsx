@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom"
 
 function TaskRow({task}){
     function taskStatusColor(status){
@@ -16,7 +17,7 @@ function TaskRow({task}){
     return(
         <>
             <tr>
-                <td>{task.title}</td>
+                <td><Link to={`/task/${task.id}`} className="text-light">{task.title}</Link></td>
                 <td className={taskStatusColor(task.status)} >{task.status}</td>
                 <td>{new Date(task.createdAt).toLocaleString()}</td>
             </tr>
