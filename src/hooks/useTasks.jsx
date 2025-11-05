@@ -51,8 +51,31 @@ export default function useTasks(){
             }
         })
     }
-    function updateTask (){
+    function updateTask (updatedTask){
         console.log('updateTask')
+        return fetch(`${apiUrl}/tasks/${updatedTask.id}`,{
+            method:'PUT',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(updatedTask)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success === true) {
+                const updatedTasks = [...tasks].map(task=>{
+                    if (task.id === updatedTask.id) {
+                        return data.task
+                    }
+                    return task;
+                })
+                setTasks(updatedTasks)
+                return data.task;
+            }
+            else{
+                throw new Error(data.message)
+            }
+        })
     }
 
     return {tasks, addTask, removeTask, updateTask}
