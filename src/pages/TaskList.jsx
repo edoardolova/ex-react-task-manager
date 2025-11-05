@@ -3,11 +3,22 @@ import { useGlobalContext } from "../contexts/GlobalContext";
 import { useCallback, useMemo, useState } from "react";
 
 export default function TaskList() {
-    const { tasks } = useGlobalContext();
+    const { tasks, removeMultipleTasks } = useGlobalContext();
 
     const [sortBy, setSortBy] = useState("createdAt");
     const [sortOrder, setSortOrder] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedTaskIds , setSelectedTaskIds ] = useState([])
+
+
+    function toggleSelection(taskId) {
+        setSelectedTaskIds (prev =>
+            prev.includes(taskId)
+                ? prev.filter(id => id !== taskId) 
+                : [...prev, taskId] 
+        );
+    }
+
 
     function debounce(callback, delay) {
         let timeout;
@@ -66,13 +77,33 @@ export default function TaskList() {
     return (
         <div className="container">
             <h1 className="text-center fw-semibold text-light py-2">TASKS</h1>
+            <div className="d-flex">
+                <input
+                    placeholder="Cerca per nome..."
+                    type="text"
+                    className="form-control mb-3"
+                    onChange={handleSearch}
+                />
+                {selectedTaskIds.length > 0 && (
+                    <button
+                        className="btn btn-danger ms-3"
+                        onClick={() => {
+                            removeMultipleTasks(selectedTaskIds)
+                                .then(() => {
+                                    alert("Task eliminate con successo");
+                                    setSelectedTaskIds([]);
+                                })
+                                .catch(err => {
+                                    alert(err.message);
+                                });
+                        }}
+                    >
+                        Elimina selezionate
+                    </button>
 
-            <input
-                placeholder="Cerca per nome..."
-                type="text"
-                className="form-control mb-3"
-                onChange={handleSearch}
-            />
+                )}
+
+            </div>
 
             <table className="table table-dark table-hover">
                 <thead>
@@ -90,7 +121,7 @@ export default function TaskList() {
                 </thead>
                 <tbody>
                     {sortedTasks.map((task) => (
-                        <TaskRow key={task.id} task={task} />
+                        <TaskRow key={task.id} task={task} checked={selectedTaskIds.includes(task.id)} onToggle={toggleSelection} />
                     ))}
                 </tbody>
             </table>

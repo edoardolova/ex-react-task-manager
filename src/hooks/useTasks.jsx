@@ -78,5 +78,38 @@ export default function useTasks(){
         })
     }
 
-    return {tasks, addTask, removeTask, updateTask}
+    async function removeMultipleTasks(ids){
+        const promises = ids.map(id =>{
+            return fetch(`${apiUrl}/tasks/${id}`,{
+                method:'DELETE',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            })
+            .then(res => res.json())
+        })
+
+        const results= await Promise.allSettled(promises)
+        let successIds = [];
+        let failedIds = [];
+
+        results.forEach((result, index) => {
+            if (result.status === "fulfilled") {
+                successIds.push(ids[index]);       
+            } 
+            else {
+                failedIds.push(ids[index]);        
+            }
+        });
+
+        setTasks(prev => prev.filter(task => !successIds.includes(task.id)));
+
+        if (failedIds.length > 0) {
+            throw new Error(`Non è stato possibile eliminare le task con id: ${failedIds.join(", ")}`);
+        }
+
+        return successIds;
+    }
+
+    return {tasks, addTask, removeTask, updateTask, removeMultipleTasks}
 }

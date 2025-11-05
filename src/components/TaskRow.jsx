@@ -1,7 +1,7 @@
 import React from "react"
 import { Link } from "react-router-dom"
 
-function TaskRow({task}){
+function TaskRow({task, checked, onToggle}){
     function taskStatusColor(status){
         switch (status) {
             case "To do":
@@ -17,7 +17,12 @@ function TaskRow({task}){
     return(
         <>
             <tr>
-                <td><Link to={`/task/${task.id}`} className="text-light">{task.title}</Link></td>
+                <td>
+                    <input type="checkbox" className="me-2" checked={checked} onChange={()=>onToggle(task.id)} />
+                    <Link to={`/task/${task.id}`} className="text-light">
+                        {task.title}
+                    </Link>
+                </td>
                 <td className={taskStatusColor(task.status)} >{task.status}</td>
                 <td>{new Date(task.createdAt).toLocaleString()}</td>
             </tr>
