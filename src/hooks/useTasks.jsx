@@ -1,121 +1,92 @@
-import { useEffect, useState } from "react";
-
+import { useEffect, useReducer } from "react";
+import tasksReducer from "../reducers/taskReducer";
 
 export default function useTasks(){
     const apiUrl = import.meta.env.VITE_API_URL;
-    const [tasks, setTasks] = useState([]);
+    const [tasks, dispatchtask] = useReducer(tasksReducer, []);
 
-    useEffect(()=>{
+    useEffect(() => {
         fetch(`${apiUrl}/tasks`)
-        .then(res => res.json())
-        .then(data => setTasks(data))
-    },[])
+            .then(res => res.json())
+            .then(data => dispatchtask({ type: 'LOAD_TASKS', payload: data }))
+            .catch(err => console.error(err));
+    }, []);
 
-    function addTask(task){
-        const foundedTask = tasks.find(t => t.title === task.title) 
-        if (foundedTask !== undefined) {
+    function addTask(task) {
+        const exists = tasks.find(t => t.title === task.title);
+        if (exists) {
             return Promise.reject(new Error("Nome già usato per un'altra task"));
         }
-        return fetch(`${apiUrl}/tasks`,{
-            method:'POST',
-            headers: {
-                "Content-Type": "application/json"
-            },
+
+        return fetch(`${apiUrl}/tasks`, {
+            method: 'POST',
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(task)
         })
         .then(res => res.json())
         .then(data => {
-            if (data.success === true) {
-                setTasks(prev => [...prev, data.task])
-                return data.task;
-            }
-            else{
-                throw new Error(data.message)
-            }
-        })
+            if (!data.success) throw new Error(data.message);
+            dispatchtask({ type: 'ADD_TASK', payload: data.task });
+            return data.task;
+        });
     }
-    function removeTask(id){
-        console.log('removedTask', id)
-        return fetch(`${apiUrl}/tasks/${id}`,{
-            method:'DELETE',
-            headers: {
-                "Content-Type": "application/json"
-            },
+
+    function removeTask(id) {
+        return fetch(`${apiUrl}/tasks/${id}`, {
+            method: 'DELETE',
+            headers: { "Content-Type": "application/json" }
         })
         .then(res => res.json())
         .then(data => {
-            if(data.success === true){
-                setTasks(prev => prev.filter(task => task.id !== Number(id)));
-
-                return data.task
-            }
-            else{
-                throw new Error(data.message)
-            }
-        })
+            if (!data.success) throw new Error(data.message);
+            dispatchtask({ type: 'REMOVE_TASK', payload: id });
+            return data.task;
+        });
     }
-    function updateTask (updatedTask){
-        const foundedTask = tasks.find(task => task.title === updatedTask.title && task.id !== updatedTask.id)
-        if (updatedTask !== undefined) {
+
+    function updateTask(updatedTask) {
+        const exists = tasks.find(t => t.title === updatedTask.title && t.id !== updatedTask.id);
+        if (exists) {
             return Promise.reject(new Error("Nome già usato per un'altra task"));
         }
-        return fetch(`${apiUrl}/tasks/${updatedTask.id}`,{
-            method:'PUT',
-            headers: {
-                "Content-Type": "application/json"
-            },
+
+        return fetch(`${apiUrl}/tasks/${updatedTask.id}`, {
+            method: 'PUT',
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedTask)
         })
         .then(res => res.json())
         .then(data => {
-            if (data.success === true) {
-                const updatedTasks = [...tasks].map(task=>{
-                    if (task.id === updatedTask.id) {
-                        return data.task
-                    }
-                    return task;
-                })
-                setTasks(updatedTasks)
-                return data.task;
-            }
-            else{
-                throw new Error(data.message)
-            }
-        })
+            if (!data.success) throw new Error(data.message);
+            dispatchtask({ type: 'UPDATE_TASK', payload: data.task });
+            return data.task;
+        });
     }
 
-    async function removeMultipleTasks(ids){
-        const promises = ids.map(id =>{
-            return fetch(`${apiUrl}/tasks/${id}`,{
-                method:'DELETE',
-                headers: {
-                    "Content-Type": "application/json"
-                },
-            })
-            .then(res => res.json())
-        })
+    async function removeMultipleTasks(ids) {
+        const promises = ids.map(id =>
+            fetch(`${apiUrl}/tasks/${id}`, { method: 'DELETE' })
+                .then(res => res.json())
+        );
 
-        const results= await Promise.allSettled(promises)
-        let successIds = [];
-        let failedIds = [];
+        const results = await Promise.allSettled(promises);
+
+        const successIds = [];
+        const failedIds = [];
 
         results.forEach((result, index) => {
-            if (result.status === "fulfilled") {
-                successIds.push(ids[index]);       
-            } 
-            else {
-                failedIds.push(ids[index]);        
-            }
+            if (result.status === "fulfilled") successIds.push(ids[index]);
+            else failedIds.push(ids[index]);
         });
 
-        setTasks(prev => prev.filter(task => !successIds.includes(task.id)));
+        dispatchtask({ type: 'REMOVE_MULTIPLE_TASKS', payload: successIds });
 
         if (failedIds.length > 0) {
-            throw new Error(`Non è stato possibile eliminare le task con id: ${failedIds.join(", ")}`);
+            throw new Error(`Non è stato possibile eliminare: ${failedIds.join(", ")}`);
         }
 
         return successIds;
     }
 
-    return {tasks, addTask, removeTask, updateTask, removeMultipleTasks}
+    return { tasks, addTask, removeTask, updateTask, removeMultipleTasks };
 }
