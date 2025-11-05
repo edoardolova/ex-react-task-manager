@@ -17,7 +17,7 @@ export default function Modal({ title, content, show, onClose, onConfirm, confir
                                 <button type="button" className="btn-close" onClick={onClose}></button>
                             </div>
                             <div className="modal-body">
-                                <p>{content}</p>
+                                {content}
                             </div>
                             <div className="modal-footer">
                                 <button type="button" onClick={onClose} className="btn btn-secondary">Annulla</button>

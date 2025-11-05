@@ -12,7 +12,10 @@ export default function useTasks(){
     },[])
 
     function addTask(task){
-        console.log(task)
+        const foundedTask = tasks.find(t => t.title === task.title) 
+        if (foundedTask !== undefined) {
+            return Promise.reject(new Error("Nome già usato per un'altra task"));
+        }
         return fetch(`${apiUrl}/tasks`,{
             method:'POST',
             headers: {
@@ -52,7 +55,10 @@ export default function useTasks(){
         })
     }
     function updateTask (updatedTask){
-        console.log('updateTask')
+        const foundedTask = tasks.find(task => task.title === updatedTask.title && task.id !== updatedTask.id)
+        if (updatedTask !== undefined) {
+            return Promise.reject(new Error("Nome già usato per un'altra task"));
+        }
         return fetch(`${apiUrl}/tasks/${updatedTask.id}`,{
             method:'PUT',
             headers: {

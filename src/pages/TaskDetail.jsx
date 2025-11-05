@@ -3,6 +3,9 @@ import { useNavigate, useParams } from "react-router-dom"
 import { useGlobalContext } from "../contexts/GlobalContext";
 import Modal from "../components/Modal";
 import EditTaskModal from "../components/EditTaskModal";
+import dayjs from "dayjs";
+
+
 export default function TaskDetail(){
     const { id } = useParams();
     const { tasks, removeTask, updateTask } = useGlobalContext();
@@ -44,7 +47,7 @@ export default function TaskDetail(){
                 {task ? (
                     <div className="card bg-dark text-light mt-5">
                         <div className="card-header">
-                            <p className="mb-0">Creato: {new Date(task.createdAt).toLocaleString()}</p>
+                            <p className="mb-0">Creato: {dayjs(task.createdAt).format('DD/MM/YYYY')}</p>
                         </div>
                         <div className="card-body">
                             <div className="d-flex mb-2">
