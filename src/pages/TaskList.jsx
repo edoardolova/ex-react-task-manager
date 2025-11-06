@@ -76,17 +76,17 @@ export default function TaskList() {
 
     return (
         <div className="container">
-            <h1 className="text-center fw-semibold text-light py-2">TASKS</h1>
-            <div className="d-flex">
+            <h1 className="text-center  text-light py-3">TASKS</h1>
+            <div className="d-flex mb-4 justify-content-center">
                 <input
                     placeholder="Cerca per nome..."
                     type="text"
-                    className="form-control mb-3"
+                    className="form-control  w-75"
                     onChange={handleSearch}
                 />
                 {selectedTaskIds.length > 0 && (
                     <button
-                        className="btn btn-danger ms-3"
+                        className="btn btn-danger ms-3 fs-6"
                         onClick={() => {
                             removeMultipleTasks(selectedTaskIds)
                                 .then(() => {
@@ -104,27 +104,32 @@ export default function TaskList() {
                 )}
 
             </div>
+            
+            <div className="table-wrapper">
 
-            <table className="table table-dark table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col" onClick={() => checkSort("title")}>
-                            Nome {getSortIcon("title")}
-                        </th>
-                        <th scope="col" onClick={() => checkSort("status")}>
-                            Stato {getSortIcon("status")}
-                        </th>
-                        <th scope="col" onClick={() => checkSort("createdAt")}>
-                            Data di creazione {getSortIcon("createdAt")}
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedTasks.map((task) => (
-                        <TaskRow key={task.id} task={task} checked={selectedTaskIds.includes(task.id)} onToggle={toggleSelection} />
-                    ))}
-                </tbody>
-            </table>
+                <table className="table table-striped table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th className="w-50" scope="col" onClick={() => checkSort("title")}>
+                                Nome {getSortIcon("title")}
+                            </th>
+                            <th className="w-25" scope="col" onClick={() => checkSort("status")}>
+                                Stato {getSortIcon("status")}
+                            </th>
+                            <th scope="col" className="w-25" onClick={() => checkSort("createdAt")}>
+                                Data di creazione {getSortIcon("createdAt")}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="task-table-body">
+                        {sortedTasks.map((task) => (
+                            <TaskRow key={task.id} task={task} checked={selectedTaskIds.includes(task.id)} onToggle={toggleSelection} />
+                        ))}
+                    </tbody>
+                </table>
+
+            </div>
         </div>
     );
 }

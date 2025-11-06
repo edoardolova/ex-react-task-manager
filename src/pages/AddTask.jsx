@@ -47,7 +47,7 @@ export default function AddTask(){
     }
     return(
         <div className="container">
-            <h1 className="text-center text-light fs-3 py-4">Add Task</h1>
+            <h1 className="text-center text-light  py-4">Aggiungi Task</h1>
 
             <form className="row g-3" onSubmit={(e)=>handleSubmit(e)}>
                 {/* title  */}
@@ -77,7 +77,7 @@ export default function AddTask(){
                     <textarea ref={descriptionRef} className="form-control" id="description" placeholder="Prendere le uova..."/>
                 </div>
 
-                <button type="submit" className="btn btn-primary w-25 mx-auto">Submit</button>
+                <button type="submit" className="btn btn-success w-25 mx-auto">Salva</button>
             </form>
 
         </div>

@@ -45,23 +45,27 @@ export default function TaskDetail(){
         <>
             <div className="container">
                 {task ? (
-                    <div className="card bg-dark text-light mt-5">
+                    <div className="card bg-dark text-light mt-5 w-75 mx-auto">
                         <div className="card-header">
                             <p className="mb-0">Creato: {dayjs(task.createdAt).format('DD/MM/YYYY')}</p>
                         </div>
                         <div className="card-body">
                             <div className="d-flex mb-2">
-                                <h3 className="card-title me-3">{task.title}</h3>
-                                <p className="card-text fw-bold my-auto">({task.status})</p>
+                                <h3 className="card-title me-3 ms-auto">{task.title}</h3>
+                                <p className="card-text fw-bold my-auto me-auto">({task.status})</p>
                             </div>
                             <p className="card-text">{task.description}</p>
 
-                            <button className="btn btn-warning me-2" onClick={() => setShowEditModal(true)}>
-                                Modifica
-                            </button>
-                            <button className="btn btn-danger" onClick={handleDelete}>
-                                Elimina
-                            </button>
+                            <div className="d-flex">
+
+                                <button className="btn btn-warning ms-auto me-2" onClick={() => setShowEditModal(true)}>
+                                    Modifica
+                                </button>
+                                <button className="btn btn-danger me-auto" onClick={handleDelete}>
+                                    Elimina
+                                </button>
+
+                            </div>
                         </div>
                     </div>
                 ) : (

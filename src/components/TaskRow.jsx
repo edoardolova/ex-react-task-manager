@@ -20,6 +20,8 @@ function TaskRow({task, checked, onToggle}){
             <tr>
                 <td>
                     <input type="checkbox" className="me-2" checked={checked} onChange={()=>onToggle(task.id)} />
+                </td>
+                <td>
                     <Link to={`/task/${task.id}`} className="text-light">
                         {task.title}
                     </Link>
